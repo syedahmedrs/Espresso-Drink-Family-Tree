@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LEVCOF — Espresso Drink Family Tree</title>
+
+<style>
+:root{
+  --coffee:#706233;
+  --coffee-dark:#4c4323;
+  --cream:#fae7c9;
+  --tan:#b0926a;
+  --gold:#e1c78f;
+  --bg:#f7f2e9;
+  --card:#fffaf2;
+  --text:#302d24;
+  --muted:#817965;
+  --line:#d8cbb5;
+  --white:#fffdf9;
+  --shadow:0 14px 40px rgba(76,67,35,.10);
+}
+
+*{box-sizing:border-box}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  margin:0;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+
+button,input{
+  font:inherit;
+}
+
+.header{
+  background:var(--coffee-dark);
+  color:white;
+  padding:52px 24px 42px;
+}
+
+.header-inner{
+  max-width:1250px;
+  margin:auto;
+}
+
+.eyebrow{
+  text-transform:uppercase;
+  letter-spacing:.18em;
+  font-size:11px;
+  opacity:.65;
+  margin-bottom:12px;
+}
+
+h1{
+  font-family:Georgia,serif;
+  font-size:clamp(38px,6vw,70px);
+  line-height:.95;
+  margin:0 0 16px;
+  font-weight:500;
+}
+
+.header p{
+  max-width:700px;
+  color:#eadfc9;
+  margin:0;
+  line-height:1.7;
+}
+
+.nav{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:rgba(247,242,233,.94);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+
+.nav-inner{
+  max-width:1250px;
+  margin:auto;
+  display:flex;
+  gap:8px;
+  padding:10px 18px;
+  overflow:auto;
+}
+
+.nav button{
+  border:0;
+  background:transparent;
+  padding:10px 15px;
+  border-radius:999px;
+  color:var(--muted);
+  cursor:pointer;
+  white-space:nowrap;
+}
+
+.nav button:hover,
+.nav button.active{
+  background:var(--cream);
+  color:var(--coffee-dark);
+}
+
+.container{
+  max-width:1250px;
+  margin:auto;
+  padding:55px 20px 100px;
+}
+
+.section{
+  margin-bottom:90px;
+}
+
+.section-heading{
+  margin-bottom:28px;
+}
+
+.section-kicker{
+  color:var(--coffee);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.17em;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+h2{
+  font-family:Georgia,serif;
+  font-size:38px;
+  font-weight:500;
+  margin:0 0 8px;
+}
+
+.section-heading p{
+  color:var(--muted);
+  max-width:720px;
+  line-height:1.65;
+}
+
+/* TREE */
+
+.tree-toolbar{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:22px;
+}
+
+.search{
+  flex:1;
+  min-width:230px;
+  padding:13px 16px;
+  border:1px solid var(--line);
+  background:var(--white);
+  border-radius:12px;
+  outline:none;
+}
+
+.search:focus{
+  border-color:var(--coffee);
+}
+
+.tool-btn{
+  border:1px solid var(--line);
+  background:var(--white);
+  padding:12px 16px;
+  border-radius:12px;
+  cursor:pointer;
+  color:var(--coffee-dark);
+}
+
+.tool-btn:hover{
+  background:var(--cream);
+}
+
+.legend{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:25px;
+}
+
+.legend-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.legend-line{
+  width:35px;
+  border-top:2px solid var(--coffee);
+}
+
+.legend-dotted{
+  width:35px;
+  border-top:2px dotted var(--tan);
+}
+
+.tree-wrap{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:30px;
+  overflow:auto;
+  box-shadow:var(--shadow);
+}
+
+.tree{
+  min-width:900px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.root{
+  position:relative;
+  background:var(--coffee-dark);
+  color:white;
+  padding:18px 35px;
+  border-radius:16px;
+  font-family:Georgia,serif;
+  font-size:24px;
+  box-shadow:0 10px 25px rgba(76,67,35,.18);
+}
+
+.root small{
+  display:block;
+  font-family:inherit;
+  font-size:11px;
+  font-family:Inter,sans-serif;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  opacity:.65;
+  margin-top:4px;
+}
+
+.root-connector{
+  height:38px;
+  width:2px;
+  background:var(--coffee);
+}
+
+.families{
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:22px;
+  position:relative;
+}
+
+.family{
+  width:190px;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.family::before{
+  content:"";
+  position:absolute;
+  top:-20px;
+  width:100%;
+  height:2px;
+  background:var(--coffee);
+}
+
+.family-title{
+  width:100%;
+  background:var(--cream);
+  border:1px solid #decbaa;
+  color:var(--coffee-dark);
+  border-radius:14px;
+  padding:13px 10px;
+  text-align:center;
+  cursor:pointer;
+  font-weight:700;
+  position:relative;
+}
+
+.family-title span{
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+  font-weight:500;
+  margin-top:3px;
+}
+
+.family-title::before{
+  content:"";
+  position:absolute;
+  width:2px;
+  height:20px;
+  background:var(--coffee);
+  left:50%;
+  top:-20px;
+}
+
+.family.collapsed .family-title::after{
+  content:" +";
+}
+
+.family:not(.collapsed) .family-title::after{
+  content:" −";
+}
+
+.drinks{
+  width:100%;
+  padding-top:14px;
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  position:relative;
+}
+
+.drinks::before{
+  content:"";
+  position:absolute;
+  width:2px;
+  height:14px;
+  background:var(--coffee);
+  left:50%;
+  top:0;
+}
+
+.family.collapsed .drinks{
+  display:none;
+}
+
+.drink-node{
+  position:relative;
+  background:white;
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:10px 12px;
+  text-align:left;
+  cursor:pointer;
+  transition:.18s;
+}
+
+.drink-node:hover,
+.drink-node.selected{
+  border-color:var(--coffee);
+  transform:translateY(-2px);
+  box-shadow:0 7px 18px rgba(76,67,35,.10);
+}
+
+.drink-node strong{
+  display:block;
+  font-size:13px;
+}
+
+.drink-node small{
+  color:var(--muted);
+  font-size:10px;
+}
+
+/* DETAIL */
+
+.detail{
+  margin-top:25px;
+  background:var(--coffee-dark);
+  color:white;
+  border-radius:22px;
+  padding:28px;
+  display:none;
+}
+
+.detail.show{
+  display:block;
+}
+
+.detail-grid{
+  display:grid;
+  grid-template-columns:1fr 1.4fr;
+  gap:30px;
+}
+
+.detail h3{
+  font-family:Georgia,serif;
+  font-size:30px;
+  margin:0 0 8px;
+}
+
+.detail-sub{
+  color:#d9cdb5;
+  line-height:1.6;
+  margin-bottom:20px;
+}
+
+.detail-label{
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:var(--gold);
+  margin-bottom:6px;
+}
+
+.ingredients{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+
+.ingredient{
+  background:rgba(255,255,255,.09);
+  border:1px solid rgba(255,255,255,.12);
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:12px;
+}
+
+.detail-note{
+  color:#ddd3c1;
+  line-height:1.65;
+  font-size:14px;
+}
+
+/* DRINK CARDS */
+
+.drink-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:20px;
+  transition:.2s;
+}
+
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:var(--shadow);
+}
+
+.card-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.card h3{
+  margin:0;
+  font-family:Georgia,serif;
+  font-size:24px;
+  font-weight:500;
+}
+
+.family-tag{
+  font-size:9px;
+  padding:5px 8px;
+  border-radius:999px;
+  background:var(--cream);
+  color:var(--coffee-dark);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  white-space:nowrap;
+}
+
+.card p{
+  color:var(--muted);
+  line-height:1.55;
+  font-size:13px;
+}
+
+.recipe{
+  border-top:1px solid var(--line);
+  padding-top:13px;
+  margin-top:15px;
+}
+
+.recipe-row{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:5px 0;
+  font-size:12px;
+}
+
+.recipe-row span:first-child{
+  color:var(--muted);
+}
+
+.recipe-row span:last-child{
+  font-weight:600;
+}
+
+/* MATRIX */
+
+.matrix-wrap{
+  overflow:auto;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+}
+
+table{
+  width:100%;
+  min-width:850px;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:13px 14px;
+  border-bottom:1px solid var(--line);
+  text-align:center;
+  font-size:12px;
+}
+
+th{
+  background:var(--cream);
+  color:var(--coffee-dark);
+  position:sticky;
+  top:0;
+}
+
+th:first-child,
+td:first-child{
+  text-align:left;
+  font-weight:700;
+  position:sticky;
+  left:0;
+  background:var(--card);
+}
+
+.yes{
+  color:var(--coffee);
+  font-weight:800;
+}
+
+.no{
+  color:#c8bba7;
+}
+
+/* NOTES */
+
+.notes{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+}
+
+.note{
+  background:var(--cream);
+  border-radius:18px;
+  padding:22px;
+}
+
+.note h3{
+  margin:0 0 9px;
+  font-family:Georgia,serif;
+  font-size:20px;
+}
+
+.note p{
+  margin:0;
+  color:#625b4e;
+  font-size:13px;
+  line-height:1.65;
+}
+
+.footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+  padding:30px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px){
+  .drink-grid,
+  .notes{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .detail-grid{
+    grid-template-columns:1fr;
+  }
+}
+
+@media(max-width:600px){
+  .container{
+    padding:40px 15px 70px;
+  }
+
+  h2{
+    font-size:31px;
+  }
+
+  .drink-grid,
+  .notes{
+    grid-template-columns:1fr;
+  }
+
+  .tree-wrap{
+    padding:20px 12px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="eyebrow">LEVCOF · Coffee Reference</div>
+    <h1>Espresso<br>Drink Family Tree</h1>
+    <p>
+      A visual reference showing how common espresso drinks are grouped by
+      preparation family, what is added to espresso, and which drinks are
+      related variations.
+    </p>
+  </div>
+</header>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <button class="active" onclick="scrollToSection('tree')">Family Tree</button>
+    <button onclick="scrollToSection('drinks')">Drink Reference</button>
+    <button onclick="scrollToSection('matrix')">Quick Matrix</button>
+    <button onclick="scrollToSection('notes')">Notes</button>
+  </div>
+</nav>
+
+<main class="container">
+
+<section class="section" id="tree">
+
+  <div class="section-heading">
+    <div class="section-kicker">01 · Structure</div>
+    <h2>What derives from what?</h2>
+    <p>
+      The tree uses <strong>preparation families</strong>, rather than pretending
+      that every drink is literally derived from another finished drink.
+      Espresso is the foundation; the family describes what is added or how it
+      is prepared.
+    </p>
+  </div>
+
+  <div class="tree-toolbar">
+    <input
+      id="search"
+      class="search"
+      type="search"
+      placeholder="Search a drink… e.g. latte, americano"
+      oninput="filterTree()"
+    />
+
+    <button class="tool-btn" onclick="expandAll()">Expand all</button>
+    <button class="tool-btn" onclick="collapseAll()">Collapse all</button>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <span class="legend-line"></span>
+      Preparation family
+    </div>
+
+    <div class="legend-item">
+      <span class="legend-dotted"></span>
+      Related variation
+    </div>
+  </div>
+
+  <div class="tree-wrap">
+
+    <div class="tree">
+
+      <div class="root">
+        ☕ ESPRESSO
+        <small>foundation / brewing method</small>
+      </div>
+
+      <div class="root-connector"></div>
+
+      <div class="families">
+
+        <!-- STRAIGHT -->
+
+        <div class="family">
+          <button class="family-title">
+            Straight
+            <span>espresso only</span>
+          </button>
+
+          <div class="drinks">
+            <button
+              class="drink-node"
+              data-name="Doppio"
+              onclick="showDrink('Doppio')"
+            >
+              <strong>Doppio</strong>
+              <small>double espresso</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- WATER -->
+
+        <div class="family">
+          <button class="family-title">
+            Water
+            <span>espresso + water</span>
+          </button>
+
+          <div class="drinks">
+
+            <button
+              class="drink-node"
+              data-name="Americano"
+              onclick="showDrink('Americano')"
+            >
+              <strong>Americano</strong>
+              <small>espresso + hot water</small>
+            </button>
+
+            <button
+              class="drink-node"
+              data-name="Long Black"
+              onclick="showDrink('Long Black')"
+            >
+              <strong>Long Black</strong>
+              <small>water + espresso</small>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- MILK -->
+
+        <div class="family">
+          <button class="family-title">
+            Milk
+            <span>espresso + milk</span>
+          </button>
+
+          <div class="drinks">
+
+            <button
+              class="drink-node"
+              data-name="Latte"
+              onclick="showDrink('Latte')"
+            >
+              <strong>Latte</strong>
+              <small>more milk</small>
+            </button>
+
+            <button
+              class="drink-node"
+              data-name="Cappuccino"
+              onclick="showDrink('Cappuccino')"
+            >
+              <strong>Cappuccino</strong>
+              <small>more foam</small>
+            </button>
+
+            <button
+              class="drink-node"
+              data-name="Flat White"
+              onclick="showDrink('Flat White')"
+            >
+              <strong>Flat White</strong>
+              <small>thin microfoam</small>
+            </button>
+
+            <button
+              class="drink-node"
+              data-name="Cortado"
+              onclick="showDrink('Cortado')"
+            >
+              <strong>Cortado</strong>
+              <small>small / near 1:1</small>
+            </button>
+
+            <button
+              class="drink-node"
+              data-name="Espresso Macchiato"
+              onclick="showDrink('Espresso Macchiato')"
+            >
+              <strong>Espresso Macchiato</strong>
+              <small>espresso + small foam</small>
+            </button>
+
+            <button
+              class="drink-node"
+              data-name="Breve"
+              onclick="showDrink('Breve')"
+            >
+              <strong>Breve</strong>
+              <small>espresso + half-and-half</small>
+            </button>
+
+            <button
+              class="drink-node"
+              data-name="Latte Macchiato"
+              onclick="showDrink('Latte Macchiato')"
+            >
+              <strong>Latte Macchiato</strong>
+              <small>milk-dominant</small>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- CHOCOLATE -->
+
+        <div class="family">
+          <button class="family-title">
+            Chocolate
+            <span>espresso + chocolate</span>
+          </button>
+
+          <div class="drinks">
+
+            <button
+              class="drink-node"
+              data-name="Mocha"
+              onclick="showDrink('Mocha')"
+            >
+              <strong>Mocha</strong>
+              <small>espresso + chocolate + milk</small>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- COLD -->
+
+        <div class="family">
+          <button class="family-title">
+            Cold / Iced
+            <span>espresso + ice</span>
+          </button>
+
+          <div class="drinks">
+
+            <button
+              class="drink-node"
+              data-name="Iced Americano"
+              onclick="showDrink('Iced Americano')"
+            >
+              <strong>Iced Americano</strong>
+              <small>espresso + cold water + ice</small>
+            </button>
+
+            <button
+              class="drink-node"
+              data-name="Iced Latte"
+              onclick="showDrink('Iced Latte')"
+            >
+              <strong>Iced Latte</strong>
+              <small>espresso + cold milk + ice</small>
+            </button>
+
+            <button
+              class="drink-node"
+              data-name="Iced Mocha"
+              onclick="showDrink('Iced Mocha')"
+            >
+              <strong>Iced Mocha</strong>
+              <small>espresso + chocolate + milk + ice</small>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- DESSERT -->
+
+        <div class="family">
+          <button class="family-title">
+            Dessert
+            <span>espresso + dessert</span>
+          </button>
+
+          <div class="drinks">
+
+            <button
+              class="drink-node"
+              data-name="Affogato"
+              onclick="showDrink('Affogato')"
+            >
+              <strong>Affogato</strong>
+              <small>gelato + espresso</small>
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div id="detail" class="detail"></div>
+
+</section>
+
+
+<section class="section" id="drinks">
+
+  <div class="section-heading">
+    <div class="section-kicker">02 · Reference</div>
+    <h2>Drink reference</h2>
+    <p>
+      The basic composition of each drink. Exact recipes vary by café,
+      country, cup size and espresso recipe.
+    </p>
+  </div>
+
+  <div class="drink-grid" id="drinkGrid"></div>
+
+</section>
+
+
+<section class="section" id="matrix">
+
+  <div class="section-heading">
+    <div class="section-kicker">03 · At a glance</div>
+    <h2>Component matrix</h2>
+    <p>
+      Quickly see what each drink contains. Ice is treated separately from
+      beverage proportions.
+    </p>
+  </div>
+
+  <div class="matrix-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Drink</th>
+          <th>Espresso</th>
+          <th>Water</th>
+          <th>Milk</th>
+          <th>Foam</th>
+          <th>Chocolate</th>
+          <th>Ice</th>
+          <th>Gelato</th>
+        </tr>
+      </thead>
+      <tbody id="matrixBody"></tbody>
+    </table>
+  </div>
+
+</section>
+
+
+<section class="section" id="notes">
+
+  <div class="section-heading">
+    <div class="section-kicker">04 · Important</div>
+    <h2>Things to remember</h2>
+  </div>
+
+  <div class="notes">
+
+    <div class="note">
+      <h3>Espresso is a method</h3>
+      <p>
+        Espresso is not a type of bean. It is a brewing method where water is
+        pushed through finely ground coffee under pressure.
+      </p>
+    </div>
+
+    <div class="note">
+      <h3>Milk drinks blend</h3>
+      <p>
+        Latte, cappuccino and flat white are not normally made as perfectly
+        separated layers. Steamed milk and espresso combine, with microfoam
+        integrated into the drink.
+      </p>
+    </div>
+
+    <div class="note">
+      <h3>Americano ≠ Long Black</h3>
+      <p>
+        Both use espresso and water, but the preparation order differs.
+        Long Black is traditionally water first, then espresso, helping
+        preserve crema.
+      </p>
+    </div>
+
+    <div class="note">
+      <h3>Macchiato has two meanings</h3>
+      <p>
+        Espresso Macchiato is espresso marked with a small amount of foam.
+        Latte Macchiato is milk-dominant and the espresso marks the milk.
+      </p>
+    </div>
+
+    <div class="note">
+      <h3>Iced percentages</h3>
+      <p>
+        When comparing iced drinks, beverage percentages should describe the
+        liquid components and exclude the physical volume occupied by ice.
+      </p>
+    </div>
+
+    <div class="note">
+      <h3>Recipes vary</h3>
+      <p>
+        Ratios shown here are conceptual reference points, not universal
+        standards. A professional café should establish its own recipe cards.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+</main>
+
+<footer class="footer">
+  LEVCOF · Internal Coffee Learning Reference
+</footer>
+
+
+<script>
+
+const drinks = [
+
+{
+ name:"Espresso",
+ family:"Foundation",
+ description:"Concentrated coffee brewed by forcing hot water through finely ground coffee under pressure.",
+ ingredients:["Coffee","Hot water"],
+ recipe:[
+  ["Coffee", "typically 7–10 g for a single"],
+  ["Beverage", "typically around 25–30 ml"],
+  ["Crema", "normally present"]
+ ]
+},
+
+{
+ name:"Doppio",
+ family:"Straight",
+ description:"A double espresso made using approximately twice the coffee dose and producing a double shot.",
+ ingredients:["Coffee","Hot water"],
+ recipe:[
+  ["Espresso shots","2"],
+  ["Coffee","commonly around 14–20 g"],
+  ["Crema","normally present"]
+ ]
+},
+
+{
+ name:"Americano",
+ family:"Water",
+ description:"Espresso diluted with hot water. The finished drink is generally mixed rather than forming clean layers.",
+ ingredients:["Espresso","Hot water"],
+ recipe:[
+  ["Espresso","1–2 shots"],
+  ["Water","roughly 70–80% conceptually"],
+  ["Appearance","mostly mixed"]
+ ]
+},
+
+{
+ name:"Long Black",
+ family:"Water",
+ description:"Hot water with espresso poured over it. The order can help preserve more crema on the surface.",
+ ingredients:["Hot water","Espresso"],
+ recipe:[
+  ["Water","base"],
+  ["Espresso","added afterward"],
+  ["Crema","more likely to remain visible"]
+ ]
+},
+
+{
+ name:"Latte",
+ family:"Milk",
+ description:"Espresso combined with a larger quantity of steamed milk and a thin layer of integrated microfoam.",
+ ingredients:["Espresso","Steamed milk","Microfoam"],
+ recipe:[
+  ["Espresso","roughly 20–25% conceptually"],
+  ["Milk","roughly 70–75%"],
+  ["Microfoam","thin integrated layer"]
+ ]
+},
+
+{
+ name:"Cappuccino",
+ family:"Milk",
+ description:"Espresso with steamed milk and a comparatively larger amount of milk foam.",
+ ingredients:["Espresso","Steamed milk","Foam"],
+ recipe:[
+  ["Espresso","roughly 30% conceptually"],
+  ["Steamed milk","roughly 30%"],
+  ["Foam","roughly 40% conceptually"]
+ ]
+},
+
+{
+ name:"Flat White",
+ family:"Milk",
+ description:"A relatively small espresso-and-milk drink with finely textured, thin microfoam. Exact recipes vary.",
+ ingredients:["Espresso","Steamed milk","Thin microfoam"],
+ recipe:[
+  ["Espresso","often stronger relative presence"],
+  ["Milk","less than a typical latte"],
+  ["Foam","thin microfoam"]
+ ]
+},
+
+{
+ name:"Cortado",
+ family:"Milk",
+ description:"A small espresso-and-milk drink traditionally made with a relatively close balance of espresso and milk.",
+ ingredients:["Espresso","Warm/steamed milk"],
+ recipe:[
+  ["Espresso","about 1 part"],
+  ["Milk","about 1 part"],
+  ["Foam","minimal"]
+ ]
+},
+
+{
+ name:"Espresso Macchiato",
+ family:"Milk",
+ description:"Espresso marked with a small dollop of milk foam. It remains predominantly espresso.",
+ ingredients:["Espresso","Small amount of milk foam"],
+ recipe:[
+  ["Espresso","roughly 80–90% conceptually"],
+  ["Foam/milk","roughly 10–20%"],
+  ["Style","espresso-dominant"]
+ ]
+},
+
+{
+ name:"Breve",
+ family:"Milk",
+ description:"An espresso drink made with steamed half-and-half instead of regular milk. The term is especially common in the United States.",
+ ingredients:["Espresso","Steamed half-and-half"],
+ recipe:[
+  ["Espresso","1–2 shots"],
+  ["Half-and-half","to taste/cup size"],
+  ["Foam","varies"]
+ ]
+},
+
+{
+ name:"Latte Macchiato",
+ family:"Milk",
+ description:"A milk-dominant drink where espresso is added to steamed milk, traditionally creating a visible espresso mark.",
+ ingredients:["Steamed milk","Espresso","Foam"],
+ recipe:[
+  ["Milk","dominant component"],
+  ["Espresso","smaller quantity"],
+  ["Appearance","can show visible layers"]
+ ]
+},
+
+{
+ name:"Mocha",
+ family:"Chocolate",
+ description:"An espresso-and-chocolate drink combined with steamed milk and usually some foam.",
+ ingredients:["Espresso","Chocolate","Steamed milk","Foam"],
+ recipe:[
+  ["Espresso","1–2 shots"],
+  ["Chocolate","sauce/powder"],
+  ["Milk","steamed"],
+  ["Foam","small amount"]
+ ]
+},
+
+{
+ name:"Iced Americano",
+ family:"Cold / Iced",
+ description:"Espresso combined with cold water and served over ice.",
+ ingredients:["Espresso","Cold water","Ice"],
+ recipe:[
+  ["Espresso","1–2 shots"],
+  ["Water","major liquid component"],
+  ["Ice","excluded from liquid percentage"]
+ ]
+},
+
+{
+ name:"Iced Latte",
+ family:"Cold / Iced",
+ description:"Espresso combined with cold milk and served over ice.",
+ ingredients:["Espresso","Cold milk","Ice"],
+ recipe:[
+  ["Espresso","1–2 shots"],
+  ["Milk","major liquid component"],
+  ["Ice","excluded from liquid percentage"]
+ ]
+},
+
+{
+ name:"Iced Mocha",
+ family:"Cold / Iced",
+ description:"Espresso, chocolate and cold milk served over ice.",
+ ingredients:["Espresso","Chocolate","Cold milk","Ice"],
+ recipe:[
+  ["Espresso","1–2 shots"],
+  ["Chocolate","sauce/powder"],
+  ["Milk","cold"],
+  ["Ice","excluded from liquid percentage"]
+ ]
+},
+
+{
+ name:"Affogato",
+ family:"Dessert",
+ description:"Vanilla gelato or ice cream served with a shot of hot espresso poured over it.",
+ ingredients:["Espresso","Vanilla gelato / ice cream"],
+ recipe:[
+  ["Gelato","1 scoop commonly"],
+  ["Espresso","1 shot commonly"],
+  ["Serveware","cup or small bowl"]
+ ]
+}
+
+];
+
+
+function renderCards(){
+
+ const grid=document.getElementById("drinkGrid");
+
+ grid.innerHTML=drinks.map(d=>`
+
+  <article class="card">
+
+    <div class="card-top">
+
+      <h3>${d.name}</h3>
+
+      <span class="family-tag">${d.family}</span>
+
+    </div>
+
+    <p>${d.description}</p>
+
+    <div class="recipe">
+
+      ${d.recipe.map(r=>`
+
+        <div class="recipe-row">
+          <span>${r[0]}</span>
+          <span>${r[1]}</span>
+        </div>
+
+      `).join("")}
+
+    </div>
+
+  </article>
+
+ `).join("");
+
+}
+
+
+function renderMatrix(){
+
+ const body=document.getElementById("matrixBody");
+
+ const columns=[
+  "Espresso",
+  "Water",
+  "Milk",
+  "Foam",
+  "Chocolate",
+  "Ice",
+  "Gelato"
+ ];
+
+ body.innerHTML=drinks.map(d=>{
+
+   const text=(d.ingredients.join(" ")).toLowerCase();
+
+   const values=columns.map(c=>{
+
+     const key=c.toLowerCase();
+
+     let yes=false;
+
+     if(key==="espresso")
+       yes=d.name==="Espresso" || text.includes("espresso");
+
+     if(key==="water")
+       yes=text.includes("water");
+
+     if(key==="milk")
+       yes=text.includes("milk") || text.includes("half-and-half");
+
+     if(key==="foam")
+       yes=text.includes("foam") || text.includes("microfoam");
+
+     if(key==="chocolate")
+       yes=text.includes("chocolate");
+
+     if(key==="ice")
+       yes=text.includes("ice");
+
+     if(key==="gelato")
+       yes=text.includes("gelato") || text.includes("ice cream");
+
+     return yes
+       ? `<td class="yes">●</td>`
+       : `<td class="no">—</td>`;
+
+   }).join("");
+
+   return `<tr><td>${d.name}</td>${values}</tr>`;
+
+ }).join("");
+
+}
+
+
+function showDrink(name){
+
+ const drink=drinks.find(d=>d.name===name);
+
+ if(!drink)return;
+
+ document.querySelectorAll(".drink-node")
+   .forEach(n=>n.classList.remove("selected"));
+
+ const node=[...document.querySelectorAll(".drink-node")]
+   .find(n=>n.dataset.name===name);
+
+ if(node)node.classList.add("selected");
+
+ const detail=document.getElementById("detail");
+
+ detail.innerHTML=`
+
+   <div class="detail-grid">
+
+     <div>
+
+       <div class="detail-label">${drink.family}</div>
+
+       <h3>${drink.name}</h3>
+
+       <div class="detail-sub">
+         ${drink.description}
+       </div>
+
+       <div class="detail-label">Contains</div>
+
+       <div class="ingredients">
+
+         ${drink.ingredients.map(i=>
+           `<span class="ingredient">${i}</span>`
+         ).join("")}
+
+       </div>
+
+     </div>
+
+     <div>
+
+       <div class="detail-label">Reference recipe</div>
+
+       <div class="detail-note">
+
+         ${drink.recipe.map(r=>
+           `<p><strong>${r[0]}:</strong> ${r[1]}</p>`
+         ).join("")}
+
+       </div>
+
+       <div class="detail-label">Important</div>
+
+       <div class="detail-note">
+         These are reference descriptions rather than universal
+         standards. LEVCOF should eventually define exact recipe cards
+         based on its chosen espresso dose, yield, cup size and milk volume.
+       </div>
+
+     </div>
+
+   </div>
+ `;
+
+ detail.classList.add("show");
+
+ detail.scrollIntoView({
+   behavior:"smooth",
+   block:"nearest"
+ });
+
+}
+
+
+function expandAll(){
+
+ document.querySelectorAll(".family")
+   .forEach(f=>f.classList.remove("collapsed"));
+
+}
+
+
+function collapseAll(){
+
+ document.querySelectorAll(".family")
+   .forEach(f=>f.classList.add("collapsed"));
+
+}
+
+
+function filterTree(){
+
+ const query=document
+   .getElementById("search")
+   .value
+   .toLowerCase()
+   .trim();
+
+ document.querySelectorAll(".family").forEach(family=>{
+
+   let familyHasMatch=false;
+
+   family.querySelectorAll(".drink-node").forEach(node=>{
+
+     const name=node.dataset.name.toLowerCase();
+
+     const match=!query || name.includes(query);
+
+     node.style.display=match ? "" : "none";
+
+     if(match)familyHasMatch=true;
+
+   });
+
+   family.style.display=familyHasMatch ? "" : "none";
+
+   if(query && familyHasMatch)
+     family.classList.remove("collapsed");
+
+ });
+
+}
+
+
+function scrollToSection(id){
+
+ document.getElementById(id)
+   .scrollIntoView({behavior:"smooth"});
+
+}
+
+
+document.querySelectorAll(".family-title")
+.forEach(button=>{
+
+ button.addEventListener("click",()=>{
+
+   button.parentElement.classList.toggle("collapsed");
+
+ });
+
+});
+
+
+renderCards();
+renderMatrix();
+
+</script>
+
+</body>
+</html>
